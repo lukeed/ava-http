@@ -34,7 +34,12 @@ http.postResponse = async function(uri, options = {}) {
 };
 
 http.put = async function(uri, options = {}) {
-	console.log(uri, options);
+	return await rp(assign(options, {uri, method: 'put'}));
+};
+
+http.putResponse = async function(uri, options = {}) {
+	options.resolveWithFullResponse = true;
+	return await this.put(uri, options);
 };
 
 http.del = async function(uri, options = {}) {
