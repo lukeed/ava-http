@@ -30,10 +30,6 @@ http.del = async function(uri, options = {}) {
 	console.log(uri, options);
 };
 
-// http('name of test', t => {
-// 	t.get(url).then()
-// })
-
 /**
  * @todo:  Wait for AVA to expose inner Test class
  * @todo:  so that we can use `test.before()` once.
@@ -41,5 +37,12 @@ http.del = async function(uri, options = {}) {
 test.beforeEach(t => {
 	t.context.http = http;
 });
+
+/**
+ * @todo:  Ideal test syntax
+ */
+// http('name of test', t => {
+// 	t.get(url).then();
+// });
 
 module.exports = test;

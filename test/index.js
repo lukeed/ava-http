@@ -17,7 +17,7 @@ test('add http context methods to Test object', async t => {
 	}
 });
 
-test('http.get, await: 200 <String>', async t => {
+test('http.get: await', async t => {
 	// spin up the test server
 	const url = await listen(async (req, res) => send(res, 200, str));
 	// get the response by waiting
@@ -25,7 +25,7 @@ test('http.get, await: 200 <String>', async t => {
 	t.same(res, str);
 });
 
-test('http.get, thennable: 200 <String>', async t => {
+test('http.get: thennable', async t => {
 	// spin up the test server
 	const url = await listen(async (req, res) => send(res, 200, str));
 	// get the response with .then()
@@ -34,10 +34,25 @@ test('http.get, thennable: 200 <String>', async t => {
 	});
 });
 
-test('http.get: 200 <Object>)', async t => {
+test('http.get: 200 <String>', async t => {
+	const url = await listen(async (req, res) => send(res, 200, str));
+	const res = await t.context.http.get(url);
+	t.same(res, str);
+	t.ok(typeof res === 'string');
+});
+
+test('http.get: 200 <Object> (String)', async t => {
+	const url = await listen(async (req, res) => send(res, 200, obj));
+	const res = await t.context.http.get(url, {json: false});
+	t.same(res, JSON.stringify(obj));
+	t.true(typeof res === 'string');
+});
+
+test('http.get: 200 <Object> (JSON)', async t => {
 	const url = await listen(async (req, res) => send(res, 200, obj));
 	const res = await t.context.http.get(url);
 	t.same(res, obj);
+	t.true(typeof res === 'object');
 });
 
 test('http.get, server is not async', async t => {
