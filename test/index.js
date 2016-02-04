@@ -34,28 +34,42 @@ test('http.get: thennable', async t => {
 	});
 });
 
-test('http.get: 200 <String>', async t => {
+/**
+ * GET REQUESTS
+ */
+
+test('http.get: String <200>', async t => {
 	const url = await listen(async (req, res) => send(res, 200, str));
 	const res = await t.context.http.get(url);
-	t.same(res, str);
 	t.ok(typeof res === 'string');
+	t.same(res, str);
 });
 
-test('http.get: 200 <Object> (String)', async t => {
+test('http.get: Object String <200>', async t => {
 	const url = await listen(async (req, res) => send(res, 200, obj));
 	const res = await t.context.http.get(url, {json: false});
-	t.same(res, JSON.stringify(obj));
 	t.true(typeof res === 'string');
+	t.same(res, JSON.stringify(obj));
 });
 
-test('http.get: 200 <Object> (JSON)', async t => {
+test('http.get: Object <200>', async t => {
 	const url = await listen(async (req, res) => send(res, 200, obj));
 	const res = await t.context.http.get(url);
-	t.same(res, obj);
 	t.true(typeof res === 'object');
+	t.same(res, obj);
 });
 
-test('http.get, server is not async', async t => {
+test('http.get: with Parameters <200>', async t => {
+	const url = await listen(async (req, res) => send(res, 200, obj));
+
+	const params = {token: '123456789'};
+	const res = await t.context.http.get(url, {params});
+
+	t.true(typeof res === 'object');
+	t.same(res, obj);
+});
+
+test('http.get: server is not async', async t => {
 	const url = await listen((req, res) => send(res, 200, obj));
 	const res = await t.context.http.get(url);
 	t.same(res, obj);
