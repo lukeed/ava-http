@@ -43,7 +43,12 @@ http.putResponse = async function(uri, options = {}) {
 };
 
 http.del = async function(uri, options = {}) {
-	console.log(uri, options);
+	return await rp(assign(options, {uri, method: 'delete'}));
+};
+
+http.delResponse = async function(uri, options = {}) {
+	options.resolveWithFullResponse = true;
+	return await this.del(uri, options);
 };
 
 /**
