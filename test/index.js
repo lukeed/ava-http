@@ -74,3 +74,48 @@ test('http.get: server is not async', async t => {
 	const res = await t.context.http.get(url);
 	t.same(res, obj);
 });
+
+/**
+ * POST REQUESTS
+ */
+
+test('http.post: Success <200>', async t => {
+	const url = await listen(async (req, res) => send(res, 200, obj));
+	// use postResponse to get full Reponse object on success
+	const res = await t.context.http.postResponse(url);
+	t.same(res.statusCode, 200);
+});
+
+test('http.post: Bad Request <400>', async t => {
+	const url = await listen(async (req, res) => send(res, 400, obj));
+	t.context.http.post(url).catch(err => {
+		t.same(err.statusCode, 400);
+	});
+});
+
+test('http.post: JSON Object <200>', async t => {
+	const url = await listen(async (req, res) => send(res, 200, obj));
+	const body = {some: 'payload'};
+	const res = await t.context.http.post(url, {body});
+	t.same(res, obj);
+});
+
+test('http.post: Form Object <200>', async t => {
+	const url = await listen(async (req, res) => send(res, 200, obj));
+	const form = {some: 'payload'}; // will be urlencoded
+	const res = await t.context.http.post(url, {form});
+	t.same(res, obj);
+});
+
+test('http.post: Bad JSON <400>', async t => {
+	const url = await listen(async (req, res) => {
+		const data = await json(req);
+		send(res, 200, data.nothing);
+	});
+
+	const body = '{ "bad json" }';
+	t.context.http.post(url, {body}).catch(err => {
+		t.same(err.statusCode, 400);
+	});
+});
+
