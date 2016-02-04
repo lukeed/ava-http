@@ -168,6 +168,50 @@ test('http.put: Bad JSON <400>', async t => {
 });
 
 /**
+ * DELETE REQUESTS
+ */
+
+test('http.del: Success <200>', async t => {
+	const url = await listen(async (req, res) => send(res, 200, obj));
+	// use postResponse to get full Reponse object on success
+	const res = await t.context.http.delResponse(url);
+	t.same(res.statusCode, 200);
+});
+
+test('http.del: Bad Request <400>', async t => {
+	const url = await listen(async (req, res) => send(res, 400, obj));
+	t.context.http.del(url).catch(err => {
+		t.same(err.statusCode, 400);
+	});
+});
+
+test('http.del: JSON Object <200>', async t => {
+	const url = await listen(async (req, res) => send(res, 200, obj));
+	const body = {some: 'payload'};
+	const res = await t.context.http.del(url, {body});
+	t.same(res, obj);
+});
+
+test('http.del: Form Object <200>', async t => {
+	const url = await listen(async (req, res) => send(res, 200, obj));
+	const form = {some: 'payload'}; // will be urlencoded
+	const res = await t.context.http.del(url, {form});
+	t.same(res, obj);
+});
+
+test('http.del: Bad JSON <400>', async t => {
+	const url = await listen(async (req, res) => {
+		const data = await json(req);
+		send(res, 200, data.nothing);
+	});
+
+	const body = '{ "bad json" }';
+	t.context.http.del(url, {body}).catch(err => {
+		t.same(err.statusCode, 400);
+	});
+});
+
+/**
  * RESPONSE CODES / HANDLERS
  */
 
