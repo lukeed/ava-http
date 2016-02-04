@@ -119,3 +119,50 @@ test('http.post: Bad JSON <400>', async t => {
 	});
 });
 
+/**
+ * RESPONSE CODES / HANDLERS
+ */
+
+test('Response: 200 <Code>', async t => {
+	const url = await listen(async (req, res) => send(res, 200));
+	// Use getResponse for full data. Added to Error responses by default.
+	const res = await t.context.http.getResponse(url);
+	t.same(res.statusCode, 200);
+});
+
+test('Response: 301 <Code>', async t => {
+	const url = await listen(async (req, res) => send(res, 301));
+	t.context.http.get(url).catch(err => {
+		t.same(err.statusCode, 301);
+	});
+});
+
+test('Response: 404 <Code>', async t => {
+	const url = await listen(async (req, res) => send(res, 404));
+	t.context.http.get(url).catch(err => {
+		t.same(err.statusCode, 404);
+	});
+});
+
+test('Response: 404 <Object>', async t => {
+	const url = await listen(async (req, res) => send(res, 404, obj));
+	t.context.http.get(url).catch(err => {
+		t.same(err.response.body, obj);
+	});
+});
+
+test('Response: 500 <Custom>', async t => {
+	const fn = async () => {
+		throw new Error();
+	};
+
+	const url = await listen(fn, {
+		// Server catches its own error.
+		onError: async (req, res) => send(res, 200, str)
+	});
+
+	t.context.http.get(url).catch(err => {
+		t.same(err.response.body, str);
+		t.same(err.statusCode, 200);
+	});
+});
