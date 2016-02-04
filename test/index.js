@@ -36,12 +36,12 @@ test('http.get, thennable: 200 <String>', async t => {
 
 test('http.get: 200 <Object>)', async t => {
 	const url = await listen(async (req, res) => send(res, 200, obj));
-	const res = await t.context.http.get(url, {json: true});
+	const res = await t.context.http.get(url);
 	t.same(res, obj);
 });
 
 test('http.get, server is not async', async t => {
 	const url = await listen((req, res) => send(res, 200, obj));
-	const res = await t.context.http.get(url, {json: true});
-	t.same(res.a, 'b');
+	const res = await t.context.http.get(url);
+	t.same(res, obj);
 });
