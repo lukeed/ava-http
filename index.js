@@ -1,25 +1,21 @@
 'use strict';
 const test = require('ava');
-// const assign = require('object-assign');
+const assign = require('object-assign');
 const request = require('request-promise');
 
 const http = {};
 
-// const defaults = {
-// 	method: 'get',
-// 	json: true
-// };
+const defaults = {
+	method: 'get',
+	json: true
+};
 
-// function req(options = {}) {
-// 	const opts = assign({}, defaults, options);
-// 	return request(opts);
-// }
+async function rp(options = {}) {
+	return await request(assign({}, defaults, options));
+}
 
 http.get = async function(uri, options = {}) {
-	// return request(assign({uri}, options));
-	console.log(options);
-	return await request(uri);
-    // .then(process, handleError);
+	return await rp(assign({uri}, options));
 };
 
 http.post = async function(uri, options = {}) {
