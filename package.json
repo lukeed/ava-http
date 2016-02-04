@@ -46,6 +46,7 @@
     "babel-preset-es2015": "6.3.13",
     "babel-register": "6.4.3",
     "babel-runtime": "6.3.19",
+    "micro": "^1.0.3",
     "xo": "*"
   },
   "peerDependencies": {
@@ -53,11 +54,13 @@
   },
   "ava": {
     "files": [
-      "test/*.js"
+      "test/index.js"
     ],
     "failFast": true,
     "verbose": true,
-    "require": ["babel-core/register"]
+    "require": [
+      "babel-core/register"
+    ]
   },
   "xo": {
     "ignore": [
