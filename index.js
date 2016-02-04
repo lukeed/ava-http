@@ -15,6 +15,7 @@ async function rp(options = {}) {
 }
 
 http.get = async function(uri, options = {}) {
+	options.qs = options.qs || options.params || {};
 	return await rp(assign({uri}, options));
 };
 
