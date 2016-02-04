@@ -25,7 +25,12 @@ http.getResponse = async function(uri, options = {}) {
 };
 
 http.post = async function(uri, options = {}) {
-	console.log(uri, options);
+	return await rp(assign(options, {uri, method: 'post'}));
+};
+
+http.postResponse = async function(uri, options = {}) {
+	options.resolveWithFullResponse = true;
+	return await this.post(uri, options);
 };
 
 http.put = async function(uri, options = {}) {
