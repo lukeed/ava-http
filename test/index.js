@@ -1,10 +1,14 @@
 'use strict';
 import test from '../';
 import {listen, send, json} from './server';
-console.log(json);
 
 const str = 'ava-http';
 const obj = {a: 'b'};
+
+/**
+ * @todo: Create a Test server with all routes pre-defined.
+ * Initialize on `test.before()`
+ */
 
 test('add http context methods to Test object', async t => {
 	const http = t.context.http;
@@ -115,6 +119,50 @@ test('http.post: Bad JSON <400>', async t => {
 
 	const body = '{ "bad json" }';
 	t.context.http.post(url, {body}).catch(err => {
+		t.same(err.statusCode, 400);
+	});
+});
+
+/**
+ * PUT REQUESTS
+ */
+
+test('http.put: Success <200>', async t => {
+	const url = await listen(async (req, res) => send(res, 200, obj));
+	// use postResponse to get full Reponse object on success
+	const res = await t.context.http.putResponse(url);
+	t.same(res.statusCode, 200);
+});
+
+test('http.put: Bad Request <400>', async t => {
+	const url = await listen(async (req, res) => send(res, 400, obj));
+	t.context.http.put(url).catch(err => {
+		t.same(err.statusCode, 400);
+	});
+});
+
+test('http.put: JSON Object <200>', async t => {
+	const url = await listen(async (req, res) => send(res, 200, obj));
+	const body = {some: 'payload'};
+	const res = await t.context.http.put(url, {body});
+	t.same(res, obj);
+});
+
+test('http.put: Form Object <200>', async t => {
+	const url = await listen(async (req, res) => send(res, 200, obj));
+	const form = {some: 'payload'}; // will be urlencoded
+	const res = await t.context.http.put(url, {form});
+	t.same(res, obj);
+});
+
+test('http.put: Bad JSON <400>', async t => {
+	const url = await listen(async (req, res) => {
+		const data = await json(req);
+		send(res, 200, data.nothing);
+	});
+
+	const body = '{ "bad json" }';
+	t.context.http.put(url, {body}).catch(err => {
 		t.same(err.statusCode, 400);
 	});
 });
