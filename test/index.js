@@ -12,3 +12,9 @@ test('add http context methods to Test object', async t => {
 	}
 });
 
+test('use http.get to fetch json', async t => {
+	// t.plan(1);
+	await t.context.http.get('http://www.google.com').then(data => {
+		console.log(data);
+	});
+});
