@@ -324,6 +324,23 @@ Ideally, AVA-http is the asynchronous, node-equivalent of PHPUnit. This means th
 * `t.headersEqual`
 * `t.headersContain`
 
+An ideal test setup may look like this:
+
+```js
+test(async t => {
+	t.responseOk(await get(url)); // no error
+});
+
+test(async t => {
+	const body = {sent: 'data'};
+	t.jsonContains(await post(url, {body}), {message: 'success'});
+});
+
+test(async t => {
+	t.jsonEquals(await get(url), {exact: 'match'});
+});
+```
+
 ## TODOs
 - [ ] Define a complete Micro test server, with routing
 - [ ] Start-up test server on `test.before()`
