@@ -99,10 +99,8 @@ If you would also like the full `Response` object, exchange your `method` for `m
 * `t.context.http.put` ==> `t.context.http.putResponse`
 * `t.context.http.del` ==> `t.context.http.delResponse`
 
-## API
-
-### Methods
-#### get(url[, options])
+## API 
+### get(url[, options])
 
 > `url`: `string`
 
@@ -112,7 +110,7 @@ If you would also like the full `Response` object, exchange your `method` for `m
 
 On resolve success, returns `payload`. On error, returns full `Response` object.
 
-#### getResponse(url[, options])
+### getResponse(url[, options])
 
 > `url`: `string`
 
@@ -122,7 +120,7 @@ On resolve success, returns `payload`. On error, returns full `Response` object.
 
 Always returns full `Response` object.
 
-#### post(url[, options])
+### post(url[, options])
 
 > `url`: `string`
 
@@ -132,7 +130,7 @@ Always returns full `Response` object.
 
 On resolve success, returns `payload`. On error, returns full `Response` object.
 
-#### postResponse(url[, options])
+### postResponse(url[, options])
 
 > `url`: `string`
 
@@ -142,7 +140,7 @@ On resolve success, returns `payload`. On error, returns full `Response` object.
 
 Always returns full `Response` object.
 
-#### put(url[, options])
+### put(url[, options])
 
 > `url`: `string`
 
@@ -152,7 +150,7 @@ Always returns full `Response` object.
 
 On resolve success, returns `payload`. On error, returns full `Response` object.
 
-#### putResponse(url[, options])
+### putResponse(url[, options])
 
 > `url`: `string`
 
@@ -162,7 +160,7 @@ On resolve success, returns `payload`. On error, returns full `Response` object.
 
 Always returns full `Response` object.
 
-#### del(url[, options])
+### del(url[, options])
 
 > `url`: `string`
 
@@ -172,7 +170,7 @@ Always returns full `Response` object.
 
 On resolve success, returns `payload`. On error, returns full `Response` object.
 
-#### delResponse(url[, options])
+### delResponse(url[, options])
 
 > `url`: `string`
 
@@ -182,8 +180,8 @@ On resolve success, returns `payload`. On error, returns full `Response` object.
 
 Always returns full `Response` object.
 
-### Options
-#### form
+## Options
+### form
 
 > Type: `object`
 
@@ -195,7 +193,7 @@ The request's `headers` will automatically include `'content-type': 'application
 
 This simulates sending an HTML form via normal means.
 
-#### body
+### body
 
 > Type: `object`
 
@@ -203,7 +201,7 @@ This simulates sending an HTML form via normal means.
 
 The payload data to be sent to the server. Leave `json` as `true` to automatically stringify as JSON.
 
-#### headers
+### headers
 
 > Type: `object`
 
@@ -211,7 +209,7 @@ The payload data to be sent to the server. Leave `json` as `true` to automatical
 
 The request headers to send.
 
-#### params
+### params
 
 > Type: `object`
 
@@ -219,7 +217,7 @@ The request headers to send.
 
 An alias of `qs`.
 
-#### qs
+### qs
 
 > Type: `object`
 
@@ -227,7 +225,7 @@ An alias of `qs`.
 
 The query string to append to the URL. See [this example](#passing-query-string-parameters).
 
-#### json
+### json
 
 > Type: `boolean`
 
@@ -235,7 +233,7 @@ The query string to append to the URL. See [this example](#passing-query-string-
 
 Whether or not the response body should be parsed as JSON.
 
-#### transform
+### transform
 
 > Type: `function`
 
@@ -298,14 +296,14 @@ test('404 error is thrown', async t => {
 
 #### Posting JSON
 ```js
-test(post JSON object', async t => {
+test('post json object', async t => {
 	const body = {some: 'data'};
 	const res = await t.context.http.post('http://localhost', {body});
 	t.same(res, {expected: 'output'});
 });
 
 // or, to also assert a statusCode...
-test(post JSON object, assert status', async t => {
+test('post json object, assert status', async t => {
 	const body = {some: 'data'};
 	const res = await t.context.http.postResponse('http://localhost', {body});
 	t.same(res.statusCode, 201);
