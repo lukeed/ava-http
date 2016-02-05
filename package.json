@@ -63,10 +63,7 @@
       "test/index.js"
     ],
     "failFast": true,
-    "verbose": true,
-    "require": [
-      "babel-core/register"
-    ]
+    "verbose": true
   },
   "xo": {
     "ignores": [

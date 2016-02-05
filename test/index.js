@@ -1,5 +1,6 @@
 'use strict';
 import test from 'ava';
+import 'babel-core/register';
 import http from '../src';
 import {listen, send, json} from './server';
 
