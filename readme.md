@@ -370,6 +370,21 @@ test('get item with parameters', async t => {
 });
 ```
 
+## TODOs
+
+- [ ] Directly import `AVA/Test` && embed methods before export -- no more `context`. (not possible atm).
+
+>>> This will make for ideal test syntax:
+>>> ```js
+>>> test('name of test', t => {
+>>> 	t.get(url).then();
+>>> });
+```
+
+- [ ] Define a complete Micro test server, with routing
+- [ ] Start-up test server on `test.before()`
+- [ ] Cleanup/Remove all `const url = await ...` within tests
+
 <div align="center">
 	<br>
 	<br>
