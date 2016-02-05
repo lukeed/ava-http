@@ -1,6 +1,10 @@
 # AVA-http
 > Async HTTP requests.
 
+[![Build Status](https://travis-ci.org/lukeed/ava-http.svg?branch=master)](https://travis-ci.org/lukeed/ava-http)
+[![NPM version](https://img.shields.io/npm/v/ava-http.svg)](https://npmjs.org/package/ava-http)
+[![NPM version](https://img.shields.io/npm/dm/ava-http.svg)](https://npmjs.org/package/ava-http)
+
 AVA-http is a wrapper around the [Request-Promise](https://github.com/request/request-promise) library, making
 it simpler to initiate HTTP requests.
 
