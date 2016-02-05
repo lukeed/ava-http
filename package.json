@@ -33,9 +33,11 @@
     "futuristic",
     "promise",
     "promises",
+    "generator",
+    "yield",
     "async",
-    "function",
     "await",
+    "function",
     "browser",
     "http"
   ],
