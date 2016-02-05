@@ -316,14 +316,5 @@ test('get item with parameters', async t => {
 - [ ] Start-up test server on `test.before()`
 - [ ] Cleanup/Remove all `const url = await ...` within tests
 
-<div align="center">
-	<br>
-	<br>
-	<br>
-	<img src="https://cdn.rawgit.com/sindresorhus/ava/fe1cea1ca3d2c8518c0cc39ec8be592beab90558/media/logo.svg" width="200" alt="AVA">
-	<br>
-	<br>
-</div>
-
 ## License
 MIT © [Luke Edwards](https://lukeed.com) et [al](https://github.com/lukeed/ava-http/graphs/contributors)
