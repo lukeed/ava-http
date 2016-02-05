@@ -307,7 +307,7 @@ test('post json object, assert status', async t => {
 	const body = {some: 'data'};
 	const res = await t.context.http.postResponse('http://localhost', {body});
 	t.same(res.statusCode, 201);
-	t.same(res.response.body, {expected: 'output'});
+	t.same(res.body, {expected: 'output'});
 });
 ```
 
