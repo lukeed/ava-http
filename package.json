@@ -9,11 +9,13 @@
     "dist/index.js"
   ],
   "scripts": {
+    "build": "babel -d dist/ src/",
     "major": "npm version major && npm publish",
     "minor": "npm version minor && npm publish",
     "patch": "npm version patch && npm publish",
     "prepublish": "npm run test",
     "postpublish": "git push origin master --follow-tags",
+    "postinstall": "npm run build",
     "test": "xo && ava"
   },
   "author": {
