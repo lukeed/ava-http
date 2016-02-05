@@ -311,6 +311,19 @@ test('get item with parameters', async t => {
 });
 ```
 
+## Goals
+Ideally, AVA-http is the asynchronous, node-equivalent of PHPUnit. This means that similar, custom assertions will be added into AVA's Test class (as opposed to exporting an `http` wrapper, as it currently stands). Methods will/should be as follows:
+
+* `t.jsonEquals`
+* `t.jsonContains`
+* `t.jsonStructure`
+* `t.responseOk`
+* `t.responseNotOk`
+* `t.responseCode`
+* `t.responseType`
+* `t.headersEqual`
+* `t.headersContain`
+
 ## TODOs
 - [ ] Define a complete Micro test server, with routing
 - [ ] Start-up test server on `test.before()`
