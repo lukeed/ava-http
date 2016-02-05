@@ -1,5 +1,4 @@
 'use strict';
-const test = require('ava');
 const assign = require('object-assign');
 const request = require('request-promise');
 
@@ -115,14 +114,4 @@ http.delResponse = async function(uri, options = {}) {
 	return await this.del(uri, options);
 };
 
-/**
- * Attach the HTTP methods to Ava/Test Object.
- *
- * @todo:  Wait for AVA to expose inner Test class
- * @todo:  so that we can use `test.before()` once.
- */
-test.beforeEach(t => {
-	t.context.http = http;
-});
-
-module.exports = test;
+module.exports = http;
