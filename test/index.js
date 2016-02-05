@@ -21,11 +21,19 @@ test('add http context methods to Test object', async t => {
 	}
 });
 
-test('http.get: await', async t => {
+test('http.get: async/await', async t => {
 	// spin up the test server
 	const url = await listen(async (req, res) => send(res, 200, str));
 	// get the response by waiting
 	const res = await t.context.http.get(url);
+	t.same(res, str);
+});
+
+test('http.get: generator/yield', function * (t) {
+	// spin up the test server
+	const url = yield listen((req, res) => send(res, 200, str));
+	// get the response by waiting
+	const res = yield t.context.http.get(url);
 	t.same(res, str);
 });
 
@@ -129,7 +137,7 @@ test('http.post: Bad JSON <400>', async t => {
 
 test('http.put: Success <200>', async t => {
 	const url = await listen(async (req, res) => send(res, 200, obj));
-	// use postResponse to get full Reponse object on success
+	// use putResponse to get full Reponse object on success
 	const res = await t.context.http.putResponse(url);
 	t.same(res.statusCode, 200);
 });
@@ -173,7 +181,7 @@ test('http.put: Bad JSON <400>', async t => {
 
 test('http.del: Success <200>', async t => {
 	const url = await listen(async (req, res) => send(res, 200, obj));
-	// use postResponse to get full Reponse object on success
+	// use delResponse to get full Reponse object on success
 	const res = await t.context.http.delResponse(url);
 	t.same(res.statusCode, 200);
 });
@@ -185,29 +193,17 @@ test('http.del: Bad Request <400>', async t => {
 	});
 });
 
-test('http.del: JSON Object <200>', async t => {
-	const url = await listen(async (req, res) => send(res, 200, obj));
-	const body = {some: 'payload'};
-	const res = await t.context.http.del(url, {body});
-	t.same(res, obj);
-});
-
-test('http.del: Form Object <200>', async t => {
-	const url = await listen(async (req, res) => send(res, 200, obj));
-	const form = {some: 'payload'}; // will be urlencoded
-	const res = await t.context.http.del(url, {form});
-	t.same(res, obj);
-});
-
-test('http.del: Bad JSON <400>', async t => {
-	const url = await listen(async (req, res) => {
-		const data = await json(req);
-		send(res, 200, data.nothing);
+test('http.del: Unauthorized <401>', async t => {
+	const url = await listen(async (req, res) => send(res, 401, obj));
+	t.context.http.del(url).catch(err => {
+		t.same(err.statusCode, 401);
 	});
+});
 
-	const body = '{ "bad json" }';
-	t.context.http.del(url, {body}).catch(err => {
-		t.same(err.statusCode, 400);
+test('http.del: Not Found <404>', async t => {
+	const url = await listen(async (req, res) => send(res, 404, obj));
+	t.context.http.del(url).catch(err => {
+		t.same(err.statusCode, 404);
 	});
 });
 
