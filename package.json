@@ -1,7 +1,7 @@
 {
   "name": "ava-http",
   "version": "0.0.0",
-  "description": "Ava, with HTTP 🚀",
+  "description": "AVA, with HTTP 🚀",
   "license": "MIT",
   "repository": "https://github.com/lukeed/ava-http",
   "main": "index.js",
