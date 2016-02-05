@@ -1,5 +1,5 @@
 'use strict';
-import test from '../';
+import test from '../dist';
 import {listen, send, json} from './server';
 
 const str = 'ava-http';
