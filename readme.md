@@ -339,6 +339,14 @@ test(async t => {
 test(async t => {
 	t.jsonEquals(await get(url), {exact: 'match'});
 });
+
+test(async => {
+	t.responseCode(await get(url), 301);
+});
+
+test(async => {
+	t.headersContain(await get(url), {'Cache-Control': 'max-age=21600'});
+});
 ```
 
 ## TODOs
