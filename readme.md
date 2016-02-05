@@ -1,105 +1,33 @@
 # AVA-http
-> Futuristic test runner... for HTTP or API endpoints.
+> Async HTTP requests.
 
-[AVA](https://github.com/sindresorhus/ava) is a fantastic "next gen" test-runner. Hopefully you've heard about it...
+AVA-http is a wrapper around the [Request-Promise](https://github.com/request/request-promise) library, making
+it simpler to initiate HTTP requests.
 
-Its intention, as far as I understand, is to test code & modules within a `node` environment.
-So, out of the box, AVA does not support testing anything in `browser` environment.
+It was made for succint API testing within [AVA](https://github.com/sindresorhus/ava), but it can be used anywhere.
 
-This package aims to bridge that gap (at least a little bit) by extending AVA's `Test` class with HTTP methods.
-And, in typcical AVA-fahion, you can use these HTTP methods with [promise](), [generator](), and [async]() function support. :)
-
-## Usage
-
-### Installation
-> Note: To use `ava-http`, you must have `ava` installed already.
-
+## Installation
 ```
 npm install --save-dev ava-http
 ```
 
-```json
-// package.json
-{
-    "name": "awesome-package",
-    "scripts": {
-        "test": "ava"
-    },
-    "devDependencies": {
-        "ava": "^0.11.0",
-        "ava-http": "^0.1.0"
-    }
-}
-```
-
-### Creating your test file
-
-Since AVA-http is a clean extension _of_ AVA, you can simply import `test` from `ava-http` instead of `ava`. Everything will work as expected.
-
-```js
-import test from 'ava-http';
-
-// Normal AVA test
-test('foo', t => {
-	// ...
-    t.pass();
-});
-
-// AVA-http test
-test('bar', async t => {
-	const expected = /*...*/;
-	const res = await t.context.http.get('http://google.com');
-	t.true(typeof res === 'object');
-	t.same(res, expected);
-});
-```
-
-### Run it
-```
-npm test
-```
-
-## AVA Configuration
-
-Please see [AVA's docs](https://github.com/sindresorhus/ava#configuration) for full information.
-
-It is **required** to include `babel-core/register` in your AVA config.
-
-```json
-{
-	"ava": {
-		"require": ["babel-core/register"]
-	}
-}
-```
-
-## AVA-http Test Methods
+## Usage
 
 The generic HTTP methods are included: [`get`, `post`, `put`, `delete`].
 
 Each of these, used within the context of an AVA test, will return a `Promise` that can be `await`ed, `yield`ed, or `then`/`catch`'d.
 
-Unfortunately, [for now](https://github.com/sindresorhus/ava/issues/25), the only way to inject custom methods into AVA/Test is through a `context` property.
-This means that AVA-http's methods must be accessed as such:
-```js
-test('test name here', async t => {
-	t.context.http.get(url, //...
-	t.context.http.post(url, //...
-	t.context.http.put(url, //...
-	t.context.http.del(url, //...
-});
-```
-
 Erroneous responses will always return the *full* `Response` object and should be caught with `.catch()`.
 
 Successful responses will return the `payload` (aka, `response.body`) by default.
 If you would also like the full `Response` object, exchange your `method` for `methodResponse`:
-* `t.context.http.get` ==> `t.context.http.getResponse`
-* `t.context.http.post` ==> `t.context.http.postResponse`
-* `t.context.http.put` ==> `t.context.http.putResponse`
-* `t.context.http.del` ==> `t.context.http.delResponse`
 
-## API 
+* `http.get` ==> `http.getResponse`
+* `http.post` ==> `http.postResponse`
+* `http.put` ==> `http.putResponse`
+* `http.del` ==> `http.delResponse`
+
+## API
 ### get(url[, options])
 
 > `url`: `string`
@@ -185,7 +113,7 @@ Always returns full `Response` object.
 
 > Type: `object`
 
-**Default:** `{}`
+> Default: `{}`
 
 An object of `key:value` pairs of formdata that will be urlencoded before reaching the server.
 
@@ -197,7 +125,7 @@ This simulates sending an HTML form via normal means.
 
 > Type: `object`
 
-**Default:** `{}`
+> Default: `{}`
 
 The payload data to be sent to the server. Leave `json` as `true` to automatically stringify as JSON.
 
@@ -205,7 +133,7 @@ The payload data to be sent to the server. Leave `json` as `true` to automatical
 
 > Type: `object`
 
-**Default:** `{}`
+> Default: `{}`
 
 The request headers to send.
 
@@ -213,7 +141,7 @@ The request headers to send.
 
 > Type: `object`
 
-**Default:** `{}`
+> Default: `{}`
 
 An alias of `qs`.
 
@@ -221,7 +149,7 @@ An alias of `qs`.
 
 > Type: `object`
 
-**Default:** `{}`
+> Default: `{}`
 
 The query string to append to the URL. See [this example](#passing-query-string-parameters).
 
@@ -229,7 +157,7 @@ The query string to append to the URL. See [this example](#passing-query-string-
 
 > Type: `boolean`
 
-**Default:** `true`
+> Default: `true`
 
 Whether or not the response body should be parsed as JSON.
 
@@ -237,17 +165,39 @@ Whether or not the response body should be parsed as JSON.
 
 > Type: `function`
 
-**Default:** `null`
+> Default: `null`
 
 Transform the response into a custom value with which the promise is resolved. See [here](https://github.com/request/request-promise#the-transform-function) for info.
 
 
-## Examples
+## AVA
 
+### Setup
+You must have AVA installed already.
+
+```js
+import test from 'ava';
+import http from 'ava-http';
+
+test('foo should succeed', t => {
+	const res = await http.get('http://localhost/posts');
+	t.true(typeof res === 'object'); // json object by default
+	t.same(res, {expected: 'output'}); // deepEqual comparison
+});
+
+test('bar should error', t => {
+	http.post('http://localhost/posts').catch(err => {
+		t.is(err.statusCode, 400);
+		t.same(err.response.body, {error: 'message'});
+	});
+});
+```
+
+### Examples
 #### Thennables
 ```js
 test('thennable', async t => {
-	t.context.http.get('http://localhost').then(res => {
+	http.get('http://localhost').then(res => {
 		t.same(res, {expected: 'output'});
 	});
 });
@@ -256,16 +206,14 @@ test('thennable', async t => {
 #### Async Support
 ```js
 test('async/await', async t => {
-	const res = await t.context.http.get('http://localhost');
-	t.same(res, {expected: 'output'});
+	t.same(await http.get('http://localhost'), {expected: 'output'});
 });
 ```
 
 #### Generator Support
 ```js
 test('generator/yield', function * (t) {
-	const res = yield t.context.http.get('http://localhost');
-	t.same(res, {expected: 'output'});
+	t.same(yield http.get('http://localhost'), {expected: 'output'});
 });
 ```
 
@@ -274,9 +222,9 @@ By default, successful responses will only yield their payloads. If you need/wan
 
 ```js
 test('response headers', async t => {
-	const res = await t.context.http.getResponse('http://localhost');
+	const res = await http.getResponse('http://localhost');
 	console.log('these are the headers: ', res.headers);
-	t.same(res.statusCode, 200);
+	t.is(res.statusCode, 200);
 });
 ```
 
@@ -288,9 +236,7 @@ For more information, please check out Request-Promise's [excellent documentatio
 
 ```js
 test('404 error is thrown', async t => {
-	t.context.http.get('http://localhost').catch(err => {
-		t.same(err.statusCode, 404);
-	});
+	http.get('http://localhost').catch(err => t.is(err.statusCode, 404));
 });
 ```
 
@@ -298,15 +244,14 @@ test('404 error is thrown', async t => {
 ```js
 test('post json object', async t => {
 	const body = {some: 'data'};
-	const res = await t.context.http.post('http://localhost', {body});
-	t.same(res, {expected: 'output'});
+	t.same(await http.post('http://localhost', {body}), {expected: 'output'});
 });
 
 // or, to also assert a statusCode...
 test('post json object, assert status', async t => {
 	const body = {some: 'data'};
-	const res = await t.context.http.postResponse('http://localhost', {body});
-	t.same(res.statusCode, 201);
+	const res = await http.postResponse('http://localhost', {body});
+	t.is(res.statusCode, 201);
 	t.same(res.response.body, {expected: 'output'});
 });
 ```
@@ -317,8 +262,7 @@ All data within the `form` object will be `urlencoded`, just as any normal `<for
 ```js
 test('post like a form', async t => {
 	const form = {some: 'data'}; // will be urlencoded
-	const res = await t.context.http.post('http://localhost', {form});
-	t.same(res, {expected: 'output'});
+	t.same(await http.post('http://localhost', {form}), {expected: 'output'});
 });
 ```
 
@@ -326,23 +270,20 @@ test('post like a form', async t => {
 ```js
 test('update an item', async t => {
 	const body = {some: 'data'};
-	const res = await t.context.http.put('http://localhost/items/2', {body});
-	t.same(res, {expected: 'output'});
+	t.same(await http.put('http://localhost/items/2', {body}), {expected: 'output'});
 });
 ```
 
 #### Deleting an Item
 ```js
 test('delete an item', async t => {
-	const res = await t.context.http.delResponse('http://localhost/items/2');
-	t.same(res.statusCode, 200);
+	const res = await http.delResponse('http://localhost/items/2');
+	t.is(res.statusCode, 200);
 });
 
 // expecting an error...
 test('delete is unauthorized', async t => {
-	t.context.http.del('http://localhost/items/2').catch(err => {
-		t.same(err.statusCode, 401);
-	});
+	http.del('http://localhost/items/2').catch(err => t.is(err.statusCode, 401));
 });
 ```
 
@@ -352,8 +293,7 @@ test('delete is authorized with token', async t => {
 	const headers = {
         'Authorization': 'Bearer 1234567890'
 	};
-	const res = t.context.http.del('http://localhost/items/2', {headers});
-	t.same(res, {expected: 'output'});
+	t.same(await http.del('http://localhost/items/2', {headers}), {expected: 'output'});
 });
 ```
 
@@ -363,22 +303,11 @@ test('get item with parameters', async t => {
 	const params = {
 		token: 'xxxxx xxxxx' // -> uri + '?token=xxxxx%20xxxxx'
 	};
-	const res = t.context.http.get('http://localhost', {params});
-	t.same(res, {expected: 'output'});
+	t.same(await http.get('http://localhost', {params}), {expected: 'output'});
 });
 ```
 
 ## TODOs
-
-- [ ] Directly import `AVA/Test` && embed methods before export -- no more `context`. (not possible atm).
-
->>> This will make for ideal test syntax:
->>> ```js
->>> test('name of test', t => {
->>> 	t.get(url).then();
->>> });
-```
-
 - [ ] Define a complete Micro test server, with routing
 - [ ] Start-up test server on `test.before()`
 - [ ] Cleanup/Remove all `const url = await ...` within tests
