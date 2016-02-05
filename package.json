@@ -58,9 +58,6 @@
     "micro": "^1.0.3",
     "xo": "*"
   },
-  "peerDependencies": {
-    "ava": "^0.11.0"
-  },
   "ava": {
     "files": [
       "test/index.js"
