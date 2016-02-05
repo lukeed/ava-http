@@ -4,9 +4,9 @@
   "description": "AVA, with HTTP 🚀",
   "license": "MIT",
   "repository": "https://github.com/lukeed/ava-http",
-  "main": "index.js",
+  "main": "dist/index.js",
   "files": [
-    "index.js"
+    "dist/index.js"
   ],
   "scripts": {
     "major": "npm version major && npm publish",
