@@ -68,11 +68,5 @@
     "require": [
       "babel-core/register"
     ]
-  },
-  "xo": {
-    "ignore": [
-      "cli.js",
-      "bench/*/*.js"
-    ]
   }
 }
