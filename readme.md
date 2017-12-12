@@ -186,13 +186,13 @@ import http from 'ava-http';
 test('foo should succeed', t => {
 	const res = await http.get('http://localhost/posts');
 	t.true(typeof res === 'object'); // json object by default
-	t.same(res, {expected: 'output'}); // deepEqual comparison
+	t.deepEqual(res, {expected: 'output'}); // deepEqual comparison
 });
 
 test('bar should error', t => {
 	http.post('http://localhost/posts').catch(err => {
 		t.is(err.statusCode, 400);
-		t.same(err.response.body, {error: 'message'});
+		t.deepEqual(err.response.body, {error: 'message'});
 	});
 });
 ```
@@ -202,7 +202,7 @@ test('bar should error', t => {
 ```js
 test('thennable', async t => {
 	http.get('http://localhost').then(res => {
-		t.same(res, {expected: 'output'});
+		t.deepEqual(res, {expected: 'output'});
 	});
 });
 ```
@@ -210,14 +210,14 @@ test('thennable', async t => {
 #### Async Support
 ```js
 test('async/await', async t => {
-	t.same(await http.get('http://localhost'), {expected: 'output'});
+	t.deepEqual(await http.get('http://localhost'), {expected: 'output'});
 });
 ```
 
 #### Generator Support
 ```js
 test('generator/yield', function * (t) {
-	t.same(yield http.get('http://localhost'), {expected: 'output'});
+	t.deepEqual(yield http.get('http://localhost'), {expected: 'output'});
 });
 ```
 
@@ -248,7 +248,7 @@ test('404 error is thrown', async t => {
 ```js
 test('post json object', async t => {
 	const body = {some: 'data'};
-	t.same(await http.post('http://localhost', {body}), {expected: 'output'});
+	t.deepEqual(await http.post('http://localhost', {body}), {expected: 'output'});
 });
 
 // or, to also assert a statusCode...
@@ -256,7 +256,7 @@ test('post json object, assert status', async t => {
 	const body = {some: 'data'};
 	const res = await http.postResponse('http://localhost', {body});
 	t.is(res.statusCode, 201);
-	t.same(res.response.body, {expected: 'output'});
+	t.deepEqual(res.response.body, {expected: 'output'});
 });
 ```
 
@@ -266,7 +266,7 @@ All data within the `form` object will be `urlencoded`, just as any normal `<for
 ```js
 test('post like a form', async t => {
 	const form = {some: 'data'}; // will be urlencoded
-	t.same(await http.post('http://localhost', {form}), {expected: 'output'});
+	t.deepEqual(await http.post('http://localhost', {form}), {expected: 'output'});
 });
 ```
 
@@ -274,7 +274,7 @@ test('post like a form', async t => {
 ```js
 test('update an item', async t => {
 	const body = {some: 'data'};
-	t.same(await http.put('http://localhost/items/2', {body}), {expected: 'output'});
+	t.deepEqual(await http.put('http://localhost/items/2', {body}), {expected: 'output'});
 });
 ```
 
@@ -297,7 +297,7 @@ test('delete is authorized with token', async t => {
 	const headers = {
         'Authorization': 'Bearer 1234567890'
 	};
-	t.same(await http.del('http://localhost/items/2', {headers}), {expected: 'output'});
+	t.deepEqual(await http.del('http://localhost/items/2', {headers}), {expected: 'output'});
 });
 ```
 
@@ -307,7 +307,7 @@ test('get item with parameters', async t => {
 	const params = {
 		token: 'xxxxx xxxxx' // -> uri + '?token=xxxxx%20xxxxx'
 	};
-	t.same(await http.get('http://localhost', {params}), {expected: 'output'});
+	t.deepEqual(await http.get('http://localhost', {params}), {expected: 'output'});
 });
 ```
 
