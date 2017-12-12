@@ -9,13 +9,7 @@
     "dist/index.js"
   ],
   "scripts": {
-    "compile": "babel -d dist/ src/",
-    "major": "npm version major && npm publish",
-    "minor": "npm version minor && npm publish",
-    "patch": "npm version patch && npm publish",
-    "prepublish": "npm run compile && npm run test",
-    "postpublish": "git push origin master --follow-tags",
-    "test": "xo && ava"
+    "test": "ava test --fail-fast"
   },
   "author": {
     "name": "Luke Edwards",
@@ -57,13 +51,6 @@
     "babel-cli": "6.4.5",
     "micro": "^1.0.3",
     "xo": "*"
-  },
-  "ava": {
-    "files": [
-      "test/index.js"
-    ],
-    "failFast": true,
-    "verbose": true
   },
   "xo": {
     "ignores": [
