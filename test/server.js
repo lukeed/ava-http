@@ -1,6 +1,5 @@
-'use strict';
-import micro from 'micro';
-import {send, json} from 'micro';
+const micro = require('micro');
+const { send, json } = require('micro');
 
 exports.send = send;
 exports.json = json;
@@ -11,15 +10,13 @@ exports.json = json;
  * @param  {Object}   opts Additional options
  * @return {String}        The micro-server's URI for requests
  */
-exports.listen = async function (fn, opts) {
+exports.listen = function (fn, opts) {
 	const srv = micro(fn, opts);
-	return new Promise((resolve, reject) => {
-		srv.listen((err) => {
-			if (err) {
-				return reject(err);
-			}
-			const {port} = srv.address();
-			resolve(`http://localhost:${port}`);
+	return new Promise((res, rej) => {
+		srv.listen(err => {
+			if (err) return rej(err);
+			const { port } = srv.address();
+			return res(`http://localhost:${port}`);
 		});
 	});
 };

@@ -1,26 +1,23 @@
 'use strict';
-import test from 'ava';
-import 'babel-core/register';
-import http from '../src';
-import {listen, send, json} from './server';
+
+// require('nodent')();
+const test = require('ava');
+const http = require('../lib');
+const { listen, send, json } = require('./server');
 
 const str = 'ava-http';
-const obj = {a: 'b'};
+const obj = { a:123 };
 
 /**
  * @todo: Create a Test server with all routes pre-defined.
  * Initialize on `test.before()`
  */
 
-test('import http object', async t => {
-	const assertion = k => {
-		return t.true(http.hasOwnProperty(k) && (typeof http[k] === 'function'), `http.${k} added`);
-	};
-
+test('import http object', t => {
 	t.true(typeof http === 'object', 'http object exists');
 
-	for (let key of ['get', 'post', 'put', 'del']) {
-		assertion(key);
+	for (let k of ['get', 'post', 'put', 'del']) {
+		t.true(http.hasOwnProperty(k) && (typeof http[k] === 'function'), `http.${k} added`);
 	}
 });
 
@@ -39,10 +36,13 @@ test('http.get: generator/yield', function * (t) {
 });
 
 test('http.get: thennable', async t => {
+	t.plan(1);
 	// spin up the test server
-	const url = await listen(async (req, res) => send(res, 200, str));
+	const url = await listen((req, res) => send(res, 200, str));
 	// get the response with .then()
-	http.get(url).then(res => t.is(res, str));
+	await http.get(url).then(res => {
+		t.is(res, str);
+	});
 });
 
 /**
@@ -63,19 +63,19 @@ test('http.get: Object String <200>', async t => {
 
 test('http.get: Object <200>', async t => {
 	const url = await listen(async (req, res) => send(res, 200, obj));
-	t.same(await http.get(url), obj);
+	t.deepEqual(await http.get(url), obj);
 });
 
 test('http.get: with Parameters <200>', async t => {
 	const url = await listen(async (req, res) => send(res, 200, obj));
 
 	const params = {token: '123456789'};
-	t.same(await http.get(url, {params}), obj);
+	t.deepEqual(await http.get(url, {params}), obj);
 });
 
 test('http.get: server is not async', async t => {
 	const url = await listen((req, res) => send(res, 200, obj));
-	t.same(await http.get(url), obj);
+	t.deepEqual(await http.get(url), obj);
 });
 
 /**
@@ -91,7 +91,7 @@ test('http.post: Success <200>', async t => {
 
 test('http.post: Bad Request <400>', async t => {
 	const url = await listen(async (req, res) => send(res, 400));
-	http.post(url).catch(err => t.is(err.statusCode, 400));
+	await http.post(url).catch(err => t.is(err.statusCode, 400));
 });
 
 test('http.post: JSON Object <200>', async t => {
@@ -104,13 +104,6 @@ test('http.post: Form Object <200>', async t => {
 	const url = await listen(async (req, res) => send(res, 200, str));
 	const form = {some: 'payload'}; // will be urlencoded
 	t.is(await http.post(url, {form}), str);
-});
-
-test('http.post: Bad JSON <400>', async t => {
-	const url = await listen(async req => await json(req));
-
-	const body = '{ "bad json" }';
-	http.post(url, {body}).catch(err => t.is(err.statusCode, 400));
 });
 
 /**
@@ -126,7 +119,7 @@ test('http.put: Success <200>', async t => {
 
 test('http.put: Bad Request <400>', async t => {
 	const url = await listen(async (req, res) => send(res, 400));
-	http.put(url).catch(err => t.is(err.statusCode, 400));
+	await http.put(url).catch(err => t.is(err.statusCode, 400));
 });
 
 test('http.put: JSON Object <200>', async t => {
@@ -141,36 +134,30 @@ test('http.put: Form Object <200>', async t => {
 	t.is(await http.put(url, {form}), str);
 });
 
-test('http.put: Bad JSON <400>', async t => {
-	const url = await listen(async req => await json(req));
-	const body = '{ "bad json" }';
-	http.put(url, {body}).catch(err => t.is(err.statusCode, 400));
-});
-
 /**
  * DELETE REQUESTS
  */
 
 test('http.del: Success <200>', async t => {
-	const url = await listen(async (req, res) => send(res, 200));
+	const url = await listen((req, res) => send(res, 200));
 	// use delResponse to get full Reponse object on success
 	const res = await http.delResponse(url);
 	t.is(res.statusCode, 200);
 });
 
 test('http.del: Bad Request <400>', async t => {
-	const url = await listen(async (req, res) => send(res, 400));
-	http.del(url).catch(err => t.is(err.statusCode, 400));
+	const url = await listen((req, res) => send(res, 400));
+	await http.del(url).catch(err => t.is(err.statusCode, 400));
 });
 
 test('http.del: Unauthorized <401>', async t => {
-	const url = await listen(async (req, res) => send(res, 401));
-	http.del(url).catch(err => t.is(err.statusCode, 401));
+	const url = await listen((req, res) => send(res, 401));
+	await http.del(url).catch(err => t.is(err.statusCode, 401));
 });
 
 test('http.del: Not Found <404>', async t => {
 	const url = await listen(async (req, res) => send(res, 404));
-	http.del(url).catch(err => t.is(err.statusCode, 404));
+	await http.del(url).catch(err => t.is(err.statusCode, 404));
 });
 
 /**
@@ -186,33 +173,17 @@ test('Response: 200 <Code>', async t => {
 
 test('Response: 301 <Code>', async t => {
 	const url = await listen(async (req, res) => send(res, 301));
-	http.get(url).catch(err => {
+	await http.get(url).catch(err => {
 		t.is(err.statusCode, 301);
 	});
 });
 
 test('Response: 404 <Code>', async t => {
 	const url = await listen(async (req, res) => send(res, 404));
-	http.get(url).catch(err => t.is(err.statusCode, 404));
+	await http.get(url).catch(err => t.is(err.statusCode, 404));
 });
 
 test('Response: 404 <Object>', async t => {
 	const url = await listen(async (req, res) => send(res, 404, obj));
-	http.get(url).catch(err => t.same(err.response.body, obj));
-});
-
-test('Response: 500 <Custom>', async t => {
-	const fn = async () => {
-		throw new Error();
-	};
-
-	const url = await listen(fn, {
-		// Server catches its own error.
-		onError: async (req, res) => send(res, 200, str)
-	});
-
-	http.get(url).catch(err => {
-		t.is(err.response.body, str);
-		t.is(err.statusCode, 200);
-	});
+	await http.get(url).catch(err => t.deepEqual(err.response.body, obj));
 });
