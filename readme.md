@@ -183,7 +183,7 @@ You must have AVA installed already.
 import test from 'ava';
 import http from 'ava-http';
 
-test('foo should succeed', t => {
+test('foo should succeed', async t => {
 	const res = await http.get('http://localhost/posts');
 	t.true(typeof res === 'object'); // json object by default
 	t.deepEqual(res, {expected: 'output'}); // deepEqual comparison
